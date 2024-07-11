@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaCheckCircle, FaArrowRight } from 'react-icons/fa';
 import Card from '../components/Card';
+import { Link } from 'react-router-dom';
 
 const Homepage: React.FC = () => {
     const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<string | null>(null);
@@ -65,9 +66,12 @@ const Homepage: React.FC = () => {
                     <Card title={selectedQuestionnaire}>
                         <div className="max-h-96 overflow-y-auto">
                             <p>Questionnaire content for {selectedQuestionnaire}</p>
-                            <button className="bg-blue-500 text-white py-2 px-4 mt-4 rounded hover:bg-blue-700">
-                                Preview Responses
-                            </button>
+                            <Link to="/app">
+
+                                <button className="bg-blue-500 text-white py-2 px-4 mt-4 rounded hover:bg-blue-700" >
+                                    Preview Responses
+                                </button>
+                            </Link>
                         </div>
                     </Card>
                 )}
