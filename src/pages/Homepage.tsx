@@ -1,11 +1,48 @@
-import React, { useState } from 'react';
+// src/pages/Homepage.tsx
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaCheckCircle, FaArrowRight } from 'react-icons/fa';
 import Card from '../components/Card';
+import Client from 'fhirclient/lib/Client';
 
-const Homepage: React.FC = () => {
+const Homepage: React.FC<{ client: Client | null }> = ({ client }) => {
     const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<string | null>(null);
     const [selectedResponse, setSelectedResponse] = useState<string | null>(null);
+    const [questionnaires, setQuestionnaires] = useState<any[]>([]);
+    const [responses, setResponses] = useState<any[]>([]);
+    const [loadingQuestionnaires, setLoadingQuestionnaires] = useState(true);
+    const [loadingResponses, setLoadingResponses] = useState(true);
+
+    useEffect(() => {
+        if (client) {
+            const fetchQuestionnaires = async () => {
+                try {
+                    const response = await client.request('Questionnaire');
+                    setQuestionnaires(response.entry || []);
+                } catch (error) {
+                    console.error('Error fetching questionnaires:', error);
+                } finally {
+                    setLoadingQuestionnaires(false);
+                }
+            };
+
+            const fetchResponses = async () => {
+                try {
+                    const response = await client.request('QuestionnaireResponse');
+                    setResponses(response.entry || []);
+                } catch (error) {
+                    console.error('Error fetching responses:', error);
+                } finally {
+                    setLoadingResponses(false);
+                }
+            };
+
+            fetchQuestionnaires();
+            fetchResponses();
+        } else {
+            console.log('Client is not initialized');
+        }
+    }, [client]);
 
     const handleQuestionnaireClick = (title: string) => {
         setSelectedQuestionnaire(title);
@@ -17,9 +54,6 @@ const Homepage: React.FC = () => {
         setSelectedQuestionnaire(null);
     };
 
-    const questionnaires = ['Questionnaire 1', 'Questionnaire 2', 'Questionnaire 3', 'Questionnaire 4', 'Questionnaire 5'];
-    const responses = ['Response 1', 'Response 2', 'Response 3'];
-
     return (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <motion.div
@@ -29,30 +63,38 @@ const Homepage: React.FC = () => {
                 className="lg:col-span-1 space-y-6"
             >
                 <Card title="Questionnaires">
-                    <ul className="list-none space-y-3 max-h-32 overflow-y-auto">
-                        {questionnaires.map((item, index) => (
-                            <li
-                                key={index}
-                                className="flex items-center cursor-pointer hover:text-blue-600"
-                                onClick={() => handleQuestionnaireClick(item)}
-                            >
-                                <FaArrowRight className="mr-2" /> {item}
-                            </li>
-                        ))}
-                    </ul>
+                    {loadingQuestionnaires ? (
+                        <p>Loading...</p>
+                    ) : (
+                        <ul className="list-none space-y-3 max-h-32 overflow-y-auto">
+                            {questionnaires.map((item: any, index: number) => (
+                                <li
+                                    key={index}
+                                    className="flex items-center cursor-pointer hover:text-blue-600"
+                                    onClick={() => handleQuestionnaireClick(item.resource.title)}
+                                >
+                                    <FaArrowRight className="mr-2" /> {item.resource.title}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </Card>
                 <Card title="Questionnaire Responses">
-                    <ul className="list-none space-y-3 max-h-32 overflow-y-auto">
-                        {responses.map((item, index) => (
-                            <li
-                                key={index}
-                                className="flex items-center cursor-pointer hover:text-blue-600"
-                                onClick={() => handleResponseClick(item)}
-                            >
-                                <FaArrowRight className="mr-2" /> {item}
-                            </li>
-                        ))}
-                    </ul>
+                    {loadingResponses ? (
+                        <p>Loading...</p>
+                    ) : (
+                        <ul className="list-none space-y-3 max-h-32 overflow-y-auto">
+                            {responses.map((item: any, index: number) => (
+                                <li
+                                    key={index}
+                                    className="flex items-center cursor-pointer hover:text-blue-600"
+                                    onClick={() => handleResponseClick(item.resource.id)}
+                                >
+                                    <FaArrowRight className="mr-2" /> {item.resource.id}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </Card>
             </motion.div>
             <motion.div
