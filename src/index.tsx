@@ -6,9 +6,9 @@ import App from './App';
 import './index.css';
 
 SMART.authorize({
-  clientId: "9e43034e-949f-41f5-880e-eb31a7663bee",
+  clientId: "ea4f1e5a-9435-468a-a6c8-d557271bb3fa",
   scope: "launch/patient openid fhirUser patient/*.read Questionnaire.read Questionnaire.search QuestionnaireResponse.read QuestionnaireResponse.create QuestionnaireResponse.search Patient.read Patient.search Patient.create",
-  redirectUri: "http://localhost:3000/callback",
+  redirectUri: "https://localhost:3000/callback",
   iss: "https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4/"
 });
 
