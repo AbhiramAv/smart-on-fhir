@@ -1,7 +1,7 @@
 // src/index.tsx
-import React from 'react';
-import ReactDOM from 'react-dom';
 import { oauth2 as SMART } from 'fhirclient';
+import ReactDOM from 'react-dom';
+import { HashRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
 
@@ -11,3 +11,10 @@ SMART.authorize({
   redirectUri: "http://localhost:3000/callback",
   iss: "https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4/"
 });
+
+ReactDOM.render(
+  <HashRouter>
+    <App />
+  </HashRouter>,
+  document.getElementById('root')
+);
